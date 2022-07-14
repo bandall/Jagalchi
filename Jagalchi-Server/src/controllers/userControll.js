@@ -1,5 +1,7 @@
 import User from "../models/User";
 import bycript from "bcrypt";
+import jwt from "jsonwebtoken";
+
 export const getJoin = (req, res) => {
    
 }
@@ -91,9 +93,26 @@ export const postLogin = async (req, res) => {
         console.log();
     }
     
+    const JWTKEY = process.env.JWT_ACCESKEY;
+    const token = jwt.sign(
+        {
+            userID: user._id,
+            userName: user.username
+        },
+        JWTKEY,
+        {
+            expiresIn: "30m",
+            issuer: "bandall77.com"
+        }
+    );
+    res.cookie("atk", token, {httpOnly: true});
+    console.log(token);
+    // return res.status(200).json({
+    //     code: 200,
+    //     message: "access token created",
+    //     token: token
+    // });
 
-    req.session.loggedIn = true;
-    req.session.user = user;
     const body = {
         username: user.username,
         point: user.points
