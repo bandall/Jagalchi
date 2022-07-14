@@ -3,7 +3,6 @@ import morgan from "morgan";
 import "dotenv/config";
 import "./db";
 import "./models/User";
-import session, { Cookie } from "express-session";
 import MongoStore from "connect-mongo";
 import cors from "cors";
 import rootRouter from "./routers/rootRouter";
@@ -16,21 +15,6 @@ const PORT = 4000;
 app.use(morgan("dev"));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(session({
-    secret: process.env.COOKIE_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 60 * 60 * 1000,
-        httpOnly: true
-    },
-    store: MongoStore.create({ mongoUrl: process.env.DB_URL })
-}));
-app.use((req, res, next) => {
-    req.sessionStore.all((error, sessions) => {
-        next();
-    })
-});
 
 // app.use((req, res, next) => {
 //     res.header("Access-Control-Allow-Origin", "*");
